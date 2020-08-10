@@ -1,0 +1,14 @@
+{
+  "name": "vavilen84/braces_validator_functional",
+  "version": "1.0.0",
+  "description": "",
+  "main": "brace_validator.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mocha": "^8.1.1"
+  }
+}
