@@ -81,10 +81,29 @@ class BracesStringValidator
      */
     protected function validateChain($braces): bool
     {
+        $counter = [
+            "opened" => [
+                Enum::TYPE_CURLY => 0,
+                Enum::TYPE_ROUND => 0,
+                Enum::TYPE_SQUARE => 0,
+            ],
+            "closed" => [
+                Enum::TYPE_CURLY => 0,
+                Enum::TYPE_ROUND => 0,
+                Enum::TYPE_SQUARE => 0,
+            ],
+        ];
         foreach ($braces as $k => $v) {
             if (!$v instanceof Brace) {
                 throw new \Exception("var is not instance of Brace/Entities/Brace");
             }
+
+            if ($braces[$k]->getState() === Enum::STATE_OPENED) {
+                $counter["opened"][$braces[$k]->getType()]++;
+            } else {
+                $counter["closed"][$braces[$k]->getType()]++;
+            }
+
             if ($k == 0) {
                 continue;
             }
@@ -93,6 +112,12 @@ class BracesStringValidator
                 && ($v->getState() === Enum::STATE_CLOSED)
                 && ($braces[$k - 1]->getType() !== $v->getType())
             ) {
+                return false;
+            }
+        }
+        $types = [Enum::TYPE_SQUARE, Enum::TYPE_ROUND, Enum::TYPE_CURLY];
+        foreach ($types as $v) {
+            if ($counter["opened"][$v] !== $counter["closed"][$v]) {
                 return false;
             }
         }

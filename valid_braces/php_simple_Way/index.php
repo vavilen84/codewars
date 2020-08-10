@@ -10,6 +10,7 @@ $testData = [
     '({' => false,
     '[(])' => false,
     '[({})](]' => false,
+    '(()' => false,
 ];
 
 function validate(string $input): bool
@@ -49,9 +50,16 @@ function validate(string $input): bool
         '[' => ']'
     ];
 
+    $counter = [];
+    foreach ($map as $k => $v) {
+        $counter[$k] = 0;
+        $counter[$v] = 0;
+    }
+
     // after OPEN brace should be also OPEN if not the same type
     // Ex.: (}
     foreach ($splitted as $k => $brace) {
+        $counter[$brace]++;
         //if brace is NOT first
         if ($k > 0) {
             // if prev is OPEN
@@ -66,7 +74,11 @@ function validate(string $input): bool
             }
         }
     }
-
+    foreach ($map as $k => $v) {
+        if ($counter[$k] !== $counter[$v]) {
+            return error("Not valid string!", $input);
+        }
+    }
     return true;
 }
 

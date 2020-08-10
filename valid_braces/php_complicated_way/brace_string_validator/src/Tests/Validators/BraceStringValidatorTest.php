@@ -27,6 +27,7 @@ class BraceStringValidatorTest extends TestCase
             ['({', false],
             ['[(])', false],
             ['[({})](]', false],
+            ['(()', false],
         ];
     }
 }
