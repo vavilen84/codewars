@@ -1,6 +1,8 @@
 package brace_validator
 
-import "strings"
+import (
+	"strings"
+)
 
 const (
 	_ = iota
@@ -60,7 +62,17 @@ func getDataMaps() (opened map[string]bool, closed map[string]bool, allowed map[
 }
 
 func validateChain(s []string, opened map[string]bool, closed map[string]bool, types map[string]int) bool {
+	type Counter struct {
+		Opened map[int]int
+		Closed map[int]int
+	}
+	c := Counter{make(map[int]int), make(map[int]int)}
 	for k := range s {
+		if ok := opened[s[k]]; ok {
+			c.Opened[types[s[k]]]++
+		} else if ok := closed[s[k]]; ok {
+			c.Closed[types[s[k]]]++
+		}
 		if k == 0 {
 			continue
 		}
@@ -70,6 +82,12 @@ func validateChain(s []string, opened map[string]bool, closed map[string]bool, t
 					return false
 				}
 			}
+		}
+	}
+	allTypes := []int{ROUND, CURLY, SQUARE}
+	for k := range allTypes {
+		if c.Opened[allTypes[k]] != c.Closed[allTypes[k]] {
+			return false
 		}
 	}
 	return true

@@ -76,6 +76,13 @@ func TestValidate(t *testing.T) {
 			},
 			false,
 		},
+		{
+			"Validate FAIL wrong chaining (()",
+			args{
+				i: "(()",
+			},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -100,9 +107,9 @@ func Test_validateChain(t *testing.T) {
 		want bool
 	}{
 		{
-			"Validate OK chain with the same type, both opened",
+			"Validate OK chain",
 			args{
-				s:      []string{"(", "("},
+				s:      []string{"(", "(", ")", ")"},
 				opened: opened,
 				closed: closed,
 				types:  types,
@@ -120,9 +127,9 @@ func Test_validateChain(t *testing.T) {
 			true,
 		},
 		{
-			"Validate OK chain with opened different types",
+			"Validate OK chain",
 			args{
-				s:      []string{"(", "["},
+				s:      []string{"(", "[", "]",")"},
 				opened: opened,
 				closed: closed,
 				types:  types,
@@ -133,6 +140,26 @@ func Test_validateChain(t *testing.T) {
 			"Validate FAIL chain",
 			args{
 				s:      []string{"(", "}"},
+				opened: opened,
+				closed: closed,
+				types:  types,
+			},
+			false,
+		},
+		{
+			"Validate FAIL chain",
+			args{
+				s:      []string{"(", "}", ")", "{"},
+				opened: opened,
+				closed: closed,
+				types:  types,
+			},
+			false,
+		},
+		{
+			"Validate FAIL chain",
+			args{
+				s:      []string{"(", "{", ")", "}"},
 				opened: opened,
 				closed: closed,
 				types:  types,
